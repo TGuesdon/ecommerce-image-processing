@@ -8,15 +8,24 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ConfigWindow();
     ConstructMenu();
+    Connector();
 }
 
+/**
+ * @brief MainWindow::ConfigWindow
+ * Configure various parameters of MainWindow
+ */
 void MainWindow::ConfigWindow(){
     setWindowTitle("Ecommerce image processing");
 }
 
+/**
+ * @brief MainWindow::ConstructMenu
+ * Initialize various QMenu and their QAction
+ */
 void MainWindow::ConstructMenu(){
     openFolderMenu = new QMenu("File");
-    menuBar()->addMenu(this->openFolderMenu);
+    menuBar()->addMenu(openFolderMenu);
 
     QAction * openFolder = new QAction("Open folder", this);
     openFolder->setShortcut(QKeySequence::Open);
@@ -30,12 +39,58 @@ void MainWindow::ConstructMenu(){
 
 }
 
-void MainWindow::OpenFolder(){
-    qDebug() << "Open folder";
+/**
+ * @brief MainWindow::Connector
+ * Connect custom signals to their function
+ */
+void MainWindow::Connector(){
+    connect(this, SIGNAL(ImagesPathChanged(QString)), this, SLOT(CountImage()));
 }
 
+//---------FILES RELATED FUNCTIONS-----------//
+
+/**
+ * @brief MainWindow::CountImage
+ * Count image in opened file or dir
+ */
+void MainWindow::CountImage(){
+    if(imagesPath != NULL){
+        const QFileInfo dir(imagesPath);
+        if(dir.exists() && dir.isDir()){
+            QDir directory(imagesPath);
+            //Filter only image and not actual and parent reference
+            directory.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
+            QStringList imagesList = directory.entryList(QStringList() << "*.jpg" << "*.JPG" << "*.png" << "*.PNG", QDir::Files);
+            int cpt = imagesList.count();
+            if(cpt == 0){
+                //TODO : ERROR
+            }
+            nbImages = cpt;
+        }else{
+            nbImages = 1;
+        }
+        qDebug() << nbImages;
+    }
+}
+
+//-----------MENU FUNCTIONS------------//
+
+/**
+ * @brief MainWindow::OpenFolder
+ * TODO:Open a QFileDialog
+ */
+void MainWindow::OpenFolder(){
+    imagesPath = QFileDialog::getExistingDirectory(this, tr("Open images folder"), ".", QFileDialog::ShowDirsOnly);
+    emit ImagesPathChanged(imagesPath);
+}
+
+/**
+ * @brief MainWindow::OpenFolder
+ * TODO:Open a QFileDialog
+ */
 void MainWindow::OpenFile(){
-    qDebug() << "Open file";
+    imagesPath = QFileDialog::getOpenFileName(this, tr("Open Image"), "~", tr("Image Files (*.png *.jpg *.bmp)"));
+    emit ImagesPathChanged(imagesPath);
 }
 
 MainWindow::~MainWindow()
