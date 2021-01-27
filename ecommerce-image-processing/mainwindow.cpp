@@ -63,13 +63,15 @@ void MainWindow::CountImage(){
             QStringList imagesList = directory.entryList(QStringList() << "*.jpg" << "*.JPG" << "*.png" << "*.PNG", QDir::Files);
             int cpt = imagesList.count();
             if(cpt == 0){
-                //TODO : ERROR
+                QMessageBox msgBox;
+                msgBox.setIcon(QMessageBox::Warning);
+                msgBox.setText("There is no images in this folder. JPG and PNG are compatible file formats.");
+                msgBox.exec();
             }
             nbImages = cpt;
         }else{
             nbImages = 1;
         }
-        qDebug() << nbImages;
     }
 }
 

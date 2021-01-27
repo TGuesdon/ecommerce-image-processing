@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QtDebug>
 #include <QFileDialog>
+#include <QMessageBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
