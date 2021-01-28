@@ -29,3 +29,25 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+# OpenCV
+
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../build-openCV/lib/release/ -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio -lopencv_calib3d
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build-openCV/lib/debug/ -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio -lopencv_calib3d
+#else:unix: LIBS += -L$$PWD/../../build-openCV/lib/ -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio -lopencv_calib3d
+
+#LIBS += $(shell pkg-config opencv --libs)
+#INCLUDEPATH += /usr/local/include/opencv4
+#DEPENDPATH += $$PWD/../../build-openCV/include
+
+#PKGCONFIG += opencv
+
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../opencv-master/build/lib/release/ -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio -lopencv_calib3d
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../opencv-master/build/lib/debug/ -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio -lopencv_calib3d
+else:unix: LIBS += -L$$PWD/../../opencv-master/build/lib/ -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio -lopencv_calib3d
+
+INCLUDEPATH += /usr/local/include/opencv4
+DEPENDPATH += $$PWD/../../opencv-master/include
+
+PKGCONFIG += opencv

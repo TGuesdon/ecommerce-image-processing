@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "opencv2/opencv.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -45,9 +46,27 @@ void MainWindow::ConstructMenu(){
  */
 void MainWindow::Connector(){
     connect(this, SIGNAL(ImagesPathChanged(QString)), this, SLOT(CountImage()));
+    connect(this, SIGNAL(ImagesPathChanged(QString)), this, SLOT(EnhanceImage()));
 }
 
 //---------FILES RELATED FUNCTIONS-----------//
+
+/**
+ * @brief MainWindow::CountImage
+ * Count image in opened file or dir
+ */
+void MainWindow::EnhanceImage(){
+    cv::Mat img = cv::imread(imagesPath.toStdString());
+    if (img.data == NULL)
+    {
+        qDebug() << "No image found! Check path.";
+    }
+    else
+    {
+        cv::imshow("Lines", img);
+        cv::waitKey();//without this image won't be shown
+    }
+}
 
 /**
  * @brief MainWindow::CountImage

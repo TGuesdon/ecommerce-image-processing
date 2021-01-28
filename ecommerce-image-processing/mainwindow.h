@@ -25,6 +25,7 @@ public slots:
     void OpenFolder();
     void OpenFile();
     void CountImage();
+    void EnhanceImage();
 
 signals:
     void ImagesPathChanged(QString newPath);
