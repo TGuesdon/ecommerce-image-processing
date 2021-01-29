@@ -25,7 +25,7 @@ public slots:
     void OpenFolder();
     void OpenFile();
     void CountImage();
-    void EnhanceImage();
+    void ApplyEnhancement();
 
 signals:
     void ImagesPathChanged(QString newPath);
@@ -36,5 +36,6 @@ private:
 
     QString imagesPath = NULL;
     int nbImages = -1;
+    bool isFolder = false;
 };
 #endif // MAINWINDOW_H

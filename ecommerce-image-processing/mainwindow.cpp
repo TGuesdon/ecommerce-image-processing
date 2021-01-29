@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "opencv2/opencv.hpp"
+#include "enhancer.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -46,31 +47,33 @@ void MainWindow::ConstructMenu(){
  */
 void MainWindow::Connector(){
     connect(this, SIGNAL(ImagesPathChanged(QString)), this, SLOT(CountImage()));
-    connect(this, SIGNAL(ImagesPathChanged(QString)), this, SLOT(EnhanceImage()));
+    connect(this, SIGNAL(ImagesPathChanged(QString)), this, SLOT(ApplyEnhancement()));
 }
 
 //---------FILES RELATED FUNCTIONS-----------//
 
 /**
  * @brief MainWindow::CountImage
- * Count image in opened file or dir
+ * Instanciate enhancer and launch process.
  */
-void MainWindow::EnhanceImage(){
-    cv::Mat img = cv::imread(imagesPath.toStdString());
-    if (img.data == NULL)
-    {
-        qDebug() << "No image found! Check path.";
-    }
-    else
-    {
-        cv::imshow("Lines", img);
-        cv::waitKey();//without this image won't be shown
+void MainWindow::ApplyEnhancement(){
+    Enhancer enhancer = Enhancer(true,true,true,true,true);
+
+    if(isFolder){
+        QDir directory(imagesPath);
+        QStringList imagesList = directory.entryList(QStringList() << "*.jpg" << "*.JPG" << "*.png" << "*.PNG", QDir::Files);
+        for(auto path : imagesList){
+            enhancer.process(imagesPath + "/" + path);
+        }
+    }else{
+        enhancer.process(imagesPath);
     }
 }
 
 /**
  * @brief MainWindow::CountImage
- * Count image in opened file or dir
+ * Count image in opened file or dir.
+ * Set isFolder value.
  */
 void MainWindow::CountImage(){
     if(imagesPath != NULL){
@@ -88,8 +91,10 @@ void MainWindow::CountImage(){
                 msgBox.exec();
             }
             nbImages = cpt;
+            isFolder = true;
         }else{
             nbImages = 1;
+            isFolder = false;
         }
     }
 }

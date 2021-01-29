@@ -34,7 +34,7 @@ void Enhancer::process(QString filepath)
 {
     img = cv::imread(filepath.toStdString());
     if(img.data == NULL){
-        qDebug() << "No image found! Check path.";
+        qDebug() << "No image found! Check path." << filepath;
     }else{
         qDebug() << "Image found. Processing.";
     }
