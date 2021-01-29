@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ConfigWindow();
     ConstructMenu();
+    ConstructCentralWidget();
     Connector();
 }
 
@@ -38,6 +39,27 @@ void MainWindow::ConstructMenu(){
 
     openFolderMenu->addAction(openFolder);
     openFolderMenu->addAction(openFile);
+}
+
+void MainWindow::ConstructCentralWidget(){
+    compressionCheckBox = new QCheckBox("Compress images");
+    centerCheckBox = new QCheckBox("Center images");
+    uniformizeBgCheckBox = new QCheckBox("Uniformize background");
+    watermarkCheckBox = new QCheckBox("Apply Watermark");
+    uniformizeLCheckBox = new QCheckBox("Uniformize lightning");
+
+    enhanceButton = new QPushButton("Enhance");
+
+    central = new QWidget();
+    setCentralWidget(central);
+    QVBoxLayout * layout = new QVBoxLayout(centralWidget());
+
+    layout->addWidget(compressionCheckBox);
+    layout->addWidget(centerCheckBox);
+    layout->addWidget(uniformizeBgCheckBox);
+    layout->addWidget(watermarkCheckBox);
+    layout->addWidget(uniformizeLCheckBox);
+    layout->addWidget(enhanceButton);
 
 }
 

@@ -5,26 +5,47 @@ Enhancer::Enhancer(bool compression, bool centering, bool uniformBackground, boo
 
 }
 
+/**
+ * @brief Enhancer::compress
+ * Compress image ?
+ */
 void Enhancer::compress()
 {
 
 }
 
+/**
+ * @brief Enhancer::center
+ * Center object using contours
+ */
 void Enhancer::center()
 {
 
 }
 
+/**
+ * @brief Enhancer::uniformizeBg
+ * Uniformize background by removing everything outside contours.
+ */
 void Enhancer::uniformizeBg()
 {
 
 }
 
+/**
+ * @brief Enhancer::applyWatermark
+ * Apply watermark
+ */
 void Enhancer::applyWatermark()
 {
 
 }
 
+/**
+ * @brief Enhancer::uniformizeL
+ * Uniformize light.
+ * Switch to lad -> ? -> rgb
+ */
 void Enhancer::uniformizeL()
 {
 

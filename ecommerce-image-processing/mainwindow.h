@@ -5,6 +5,10 @@
 #include <QtDebug>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QVBoxLayout>
+#include <QCheckBox>
+#include <QPushButton>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,6 +22,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     void ConfigWindow();
     void ConstructMenu();
+    void ConstructCentralWidget();
     void Connector();
     ~MainWindow();
 
@@ -33,6 +38,15 @@ signals:
 private:
     Ui::MainWindow *ui;
     QMenu *openFolderMenu;
+    QWidget *central;
+
+    QCheckBox *compressionCheckBox = nullptr;
+    QCheckBox *centerCheckBox = nullptr;
+    QCheckBox *uniformizeBgCheckBox = nullptr;
+    QCheckBox *watermarkCheckBox = nullptr;
+    QCheckBox *uniformizeLCheckBox = nullptr;
+
+    QPushButton *enhanceButton = nullptr;
 
     QString imagesPath = NULL;
     int nbImages = -1;
