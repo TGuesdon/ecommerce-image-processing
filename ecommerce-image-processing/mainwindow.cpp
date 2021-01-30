@@ -69,7 +69,7 @@ void MainWindow::ConstructCentralWidget(){
  */
 void MainWindow::Connector(){
     connect(this, SIGNAL(ImagesPathChanged(QString)), this, SLOT(CountImage()));
-    connect(this, SIGNAL(ImagesPathChanged(QString)), this, SLOT(ApplyEnhancement()));
+    connect(enhanceButton, SIGNAL(clicked()), this, SLOT(ApplyEnhancement()));
 }
 
 //---------FILES RELATED FUNCTIONS-----------//
@@ -79,11 +79,11 @@ void MainWindow::Connector(){
  * Instanciate enhancer and launch process.
  */
 void MainWindow::ApplyEnhancement(){
-    Enhancer enhancer = Enhancer(true,true,true,true,true);
+    Enhancer enhancer = Enhancer(compressionCheckBox->isChecked(),centerCheckBox->isChecked(),uniformizeBgCheckBox->isChecked(),watermarkCheckBox->isChecked(),uniformizeLCheckBox->isChecked());
 
     if(isFolder){
         QDir directory(imagesPath);
-        QStringList imagesList = directory.entryList(QStringList() << "*.jpg" << "*.JPG" << "*.png" << "*.PNG", QDir::Files);
+        QStringList imagesList = directory.entryList(QStringList() << "*.jpg" << "*.JPG" << "*.png" << "*.PNG" << "*.jpeg" << "*.JPEG", QDir::Files);
         for(auto path : imagesList){
             enhancer.process(imagesPath + "/" + path);
         }

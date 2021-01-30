@@ -2,7 +2,11 @@
 
 Enhancer::Enhancer(bool compression, bool centering, bool uniformBackground, bool watermark, bool uniformLuminosity)
 {
-
+    this->compression = compression;
+    this->centering = centering;
+    this->uniformBackground = uniformBackground;
+    this->watermark = watermark;
+    this->uniformLuminosity = uniformLuminosity;
 }
 
 /**
@@ -11,7 +15,7 @@ Enhancer::Enhancer(bool compression, bool centering, bool uniformBackground, boo
  */
 void Enhancer::compress()
 {
-
+    qDebug() << "Compression";
 }
 
 /**
@@ -20,7 +24,7 @@ void Enhancer::compress()
  */
 void Enhancer::center()
 {
-
+    qDebug() << "Centering";
 }
 
 /**
@@ -29,7 +33,7 @@ void Enhancer::center()
  */
 void Enhancer::uniformizeBg()
 {
-
+    qDebug() << "Background uniformization";
 }
 
 /**
@@ -38,7 +42,7 @@ void Enhancer::uniformizeBg()
  */
 void Enhancer::applyWatermark()
 {
-
+    qDebug() << "Apply watermark";
 }
 
 /**
@@ -48,7 +52,7 @@ void Enhancer::applyWatermark()
  */
 void Enhancer::uniformizeL()
 {
-
+    qDebug() << "Light uniformization";
 }
 
 void Enhancer::process(QString filepath)
@@ -58,5 +62,10 @@ void Enhancer::process(QString filepath)
         qDebug() << "No image found! Check path." << filepath;
     }else{
         qDebug() << "Image found. Processing.";
+        if(compression) compress();
+        if(centering) center();
+        if(uniformBackground) uniformizeBg();
+        if(watermark) applyWatermark();
+        if(uniformLuminosity) uniformizeL();
     }
 }
