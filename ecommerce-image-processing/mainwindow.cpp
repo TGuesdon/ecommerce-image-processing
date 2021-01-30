@@ -68,6 +68,7 @@ void MainWindow::ConstructCentralWidget(){
  * Connect custom signals to their function
  */
 void MainWindow::Connector(){
+    connect(this, SIGNAL(ImagesPathChanged(QString)), this, SLOT(CheckPath()));
     connect(this, SIGNAL(ImagesPathChanged(QString)), this, SLOT(CountImage()));
     connect(enhanceButton, SIGNAL(clicked()), this, SLOT(ApplyEnhancement()));
 }
@@ -93,31 +94,40 @@ void MainWindow::ApplyEnhancement(){
 }
 
 /**
+ * @brief MainWindow::CheckPath
+ * Check if path is a folder or an image, update isFolder value.
+ */
+void MainWindow::CheckPath(){
+    if(imagesPath != NULL){
+        const QFileInfo dir(imagesPath);
+        if(dir.exists() && dir.isDir()){
+            isFolder = true;
+        }else{
+            isFolder = false;
+        }
+    }
+}
+
+/**
  * @brief MainWindow::CountImage
  * Count image in opened file or dir.
  * Set isFolder value.
  */
 void MainWindow::CountImage(){
-    if(imagesPath != NULL){
-        const QFileInfo dir(imagesPath);
-        if(dir.exists() && dir.isDir()){
-            QDir directory(imagesPath);
-            //Filter only image and not actual and parent reference
-            directory.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
-            QStringList imagesList = directory.entryList(QStringList() << "*.jpg" << "*.JPG" << "*.png" << "*.PNG", QDir::Files);
-            int cpt = imagesList.count();
-            if(cpt == 0){
-                QMessageBox msgBox;
-                msgBox.setIcon(QMessageBox::Warning);
-                msgBox.setText("There is no images in this folder. JPG and PNG are compatible file formats.");
-                msgBox.exec();
-            }
-            nbImages = cpt;
-            isFolder = true;
-        }else{
-            nbImages = 1;
-            isFolder = false;
+    if(isFolder){
+        QDir directory(imagesPath);
+        //Filter only image and not actual and parent reference
+        QStringList imagesList = directory.entryList(QStringList() << "*.jpg" << "*.JPG" << "*.png" << "*.PNG", QDir::Files);
+        int cpt = imagesList.count();
+        if(cpt == 0){
+            QMessageBox msgBox;
+            msgBox.setIcon(QMessageBox::Warning);
+            msgBox.setText("There is no images in this folder. JPG and PNG are compatible file formats.");
+            msgBox.exec();
         }
+        nbImages = cpt;
+    }else{
+        nbImages = 1;
     }
 }
 
