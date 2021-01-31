@@ -47,7 +47,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../opencv-master/build/lib/release/ -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio -lopencv_calib3d
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../opencv-master/build/lib/debug/ -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio -lopencv_calib3d
-else:unix: LIBS += -L$$PWD/../../opencv-master/build/lib/ -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio -lopencv_calib3d
+else:unix: LIBS += -L$$PWD/../../opencv-master/build/lib/ -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio -lopencv_calib3d -lopencv_imgproc
 
 INCLUDEPATH += /usr/local/include/opencv4
 DEPENDPATH += $$PWD/../../opencv-master/include

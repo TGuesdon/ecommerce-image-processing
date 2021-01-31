@@ -47,12 +47,31 @@ void Enhancer::applyWatermark()
 
 /**
  * @brief Enhancer::uniformizeL
- * Uniformize light.
- * Switch to lad -> ? -> rgb
+ * Illumination correction
+ * Siwtch to lab space
+ * Use adaptative histogram equalization
  */
 void Enhancer::uniformizeL()
 {
-    qDebug() << "Light uniformization";
+    cv::Mat lab;
+    cv::cvtColor(img, lab, cv::COLOR_BGR2Lab);
+
+    //Split lab into L,a and b channel
+    std::vector<cv::Mat> lab_planes(3);
+    cv::split(lab, lab_planes);
+
+    //Apply clahe algorithm on L channel
+    cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+    clahe->setClipLimit(2.0);
+    cv::Mat dst;
+    clahe->apply(lab_planes[0], dst);
+
+    //Merge the the color planes back into an Lab image
+    dst.copyTo(lab_planes[0]);
+    cv::merge(lab_planes, lab);
+
+    //Convert back to rgb
+    cv::cvtColor(lab, img, cv::COLOR_Lab2BGR);
 }
 
 void Enhancer::process(QString filepath)
