@@ -11,7 +11,7 @@
 class Enhancer
 {
 public:
-    Enhancer(bool compression, bool centering, bool uniformBackground, bool watermark, bool uniformLuminosity);
+    Enhancer(bool compression, bool centering, bool uniformBackground, bool watermark, bool illuminationCorrection);
 
     void process(QString filepath);
 
@@ -21,13 +21,13 @@ private:
     void center();
     void uniformizeBg();
     void applyWatermark();
-    void uniformizeL();
+    void correctIllumination();
 
     bool compression = false;
     bool centering = false;
     bool uniformBackground = false;
     bool watermark = false;
-    bool uniformLuminosity = false;
+    bool illuminationCorrection = false;
 
     cv::Mat img;
 };

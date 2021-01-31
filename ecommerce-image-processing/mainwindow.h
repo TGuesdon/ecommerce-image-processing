@@ -45,7 +45,7 @@ private:
     QCheckBox *centerCheckBox = nullptr;
     QCheckBox *uniformizeBgCheckBox = nullptr;
     QCheckBox *watermarkCheckBox = nullptr;
-    QCheckBox *uniformizeLCheckBox = nullptr;
+    QCheckBox *illuminationCorrectionCheckBox = nullptr;
 
     QPushButton *enhanceButton = nullptr;
 

@@ -6,7 +6,7 @@ This C++/Qt application will enhance images of products for ecommerce.
 - Background uniformization
 - Centered product
 - Watermark
-- Light uniformization
+- Illumination correction
 
 # Compatibility :
 - PNG

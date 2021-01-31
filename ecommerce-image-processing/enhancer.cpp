@@ -51,7 +51,7 @@ void Enhancer::applyWatermark()
  * Siwtch to lab space
  * Use adaptative histogram equalization
  */
-void Enhancer::uniformizeL()
+void Enhancer::illuminationCorrection()
 {
     cv::Mat lab;
     cv::cvtColor(img, lab, cv::COLOR_BGR2Lab);
@@ -85,6 +85,6 @@ void Enhancer::process(QString filepath)
         if(centering) center();
         if(uniformBackground) uniformizeBg();
         if(watermark) applyWatermark();
-        if(uniformLuminosity) uniformizeL();
+        if(uniformLuminosity) illuminationCorrection();
     }
 }

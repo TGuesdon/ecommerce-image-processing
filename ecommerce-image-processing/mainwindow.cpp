@@ -46,7 +46,7 @@ void MainWindow::ConstructCentralWidget(){
     centerCheckBox = new QCheckBox("Center images");
     uniformizeBgCheckBox = new QCheckBox("Uniformize background");
     watermarkCheckBox = new QCheckBox("Apply Watermark");
-    uniformizeLCheckBox = new QCheckBox("Uniformize lightning");
+    illuminationCorrectionCheckBox = new QCheckBox("Uniformize lightning");
 
     enhanceButton = new QPushButton("Enhance");
 
@@ -58,7 +58,7 @@ void MainWindow::ConstructCentralWidget(){
     layout->addWidget(centerCheckBox);
     layout->addWidget(uniformizeBgCheckBox);
     layout->addWidget(watermarkCheckBox);
-    layout->addWidget(uniformizeLCheckBox);
+    layout->addWidget(illuminationCorrectionCheckBox);
     layout->addWidget(enhanceButton);
 
 }
@@ -80,7 +80,7 @@ void MainWindow::Connector(){
  * Instanciate enhancer and launch process.
  */
 void MainWindow::ApplyEnhancement(){
-    Enhancer enhancer = Enhancer(compressionCheckBox->isChecked(),centerCheckBox->isChecked(),uniformizeBgCheckBox->isChecked(),watermarkCheckBox->isChecked(),uniformizeLCheckBox->isChecked());
+    Enhancer enhancer = Enhancer(compressionCheckBox->isChecked(),centerCheckBox->isChecked(),uniformizeBgCheckBox->isChecked(),watermarkCheckBox->isChecked(),illuminationCorrectionCheckBox->isChecked());
 
     if(isFolder){
         QDir directory(imagesPath);
