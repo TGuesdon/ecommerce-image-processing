@@ -117,12 +117,12 @@ void MainWindow::CountImage(){
     if(isFolder){
         QDir directory(imagesPath);
         //Filter only image and not actual and parent reference
-        QStringList imagesList = directory.entryList(QStringList() << "*.jpg" << "*.JPG" << "*.png" << "*.PNG", QDir::Files);
+        QStringList imagesList = directory.entryList(QStringList() << "*.jpg" << "*.JPG" << "*.png" << "*.PNG" << "*.jpeg" << "*.JPEG", QDir::Files);
         int cpt = imagesList.count();
         if(cpt == 0){
             QMessageBox msgBox;
             msgBox.setIcon(QMessageBox::Warning);
-            msgBox.setText("There is no images in this folder. JPG and PNG are compatible file formats.");
+            msgBox.setText("There is no images in this folder. JPG, PNG and JPEG are compatible file formats.");
             msgBox.exec();
         }
         nbImages = cpt;
@@ -147,7 +147,7 @@ void MainWindow::OpenFolder(){
  * TODO:Open a QFileDialog
  */
 void MainWindow::OpenFile(){
-    imagesPath = QFileDialog::getOpenFileName(this, tr("Open Image"), "~", tr("Image Files (*.png *.jpg *.bmp)"));
+    imagesPath = QFileDialog::getOpenFileName(this, tr("Open Image"), "~", tr("Image Files (*.png *.jpg *.jpeg)"));
     emit ImagesPathChanged(imagesPath);
 }
 

@@ -1,12 +1,12 @@
 #include "enhancer.h"
 
-Enhancer::Enhancer(bool compression, bool centering, bool uniformBackground, bool watermark, bool uniformLuminosity)
+Enhancer::Enhancer(bool compression, bool centering, bool uniformBackground, bool watermark, bool illuminationCorrection)
 {
     this->compression = compression;
     this->centering = centering;
     this->uniformBackground = uniformBackground;
     this->watermark = watermark;
-    this->uniformLuminosity = uniformLuminosity;
+    this->illuminationCorrection = illuminationCorrection;
 }
 
 /**
@@ -46,12 +46,11 @@ void Enhancer::applyWatermark()
 }
 
 /**
- * @brief Enhancer::uniformizeL
- * Illumination correction
+ * @brief Enhancer::illuminationCorrection
  * Siwtch to lab space
  * Use adaptative histogram equalization
  */
-void Enhancer::illuminationCorrection()
+void Enhancer::correctIllumination()
 {
     cv::Mat lab;
     cv::cvtColor(img, lab, cv::COLOR_BGR2Lab);
@@ -85,6 +84,6 @@ void Enhancer::process(QString filepath)
         if(centering) center();
         if(uniformBackground) uniformizeBg();
         if(watermark) applyWatermark();
-        if(uniformLuminosity) illuminationCorrection();
+        if(illuminationCorrection) correctIllumination();
     }
 }
