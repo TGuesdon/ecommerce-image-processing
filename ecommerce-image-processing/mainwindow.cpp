@@ -99,10 +99,14 @@ void MainWindow::ApplyEnhancement(){
         QStringList imagesList = directory.entryList(QStringList() << "*.jpg" << "*.JPG" << "*.png" << "*.PNG" << "*.jpeg" << "*.JPEG", QDir::Files);
         for(auto path : imagesList){
             cv::Mat res = enhancer.process(imagesPath + "/" + path);
+            SaveImage(res, savePath + "/" + path);
         }
     }else{
         cv::Mat res = enhancer.process(imagesPath);
-        cv::imwrite(imagesPath.toStdString(), res);
+        QFile f(imagesPath);
+        QFileInfo fileInfo(f.fileName());
+        QString filename(fileInfo.fileName());
+        SaveImage(res, savePath + "/" + filename);
     }
 }
 
