@@ -73,17 +73,22 @@ void Enhancer::correctIllumination()
     cv::cvtColor(lab, img, cv::COLOR_Lab2BGR);
 }
 
-void Enhancer::process(QString filepath)
+cv::Mat Enhancer::process(QString filepath)
 {
     img = cv::imread(filepath.toStdString());
+    //cv::imshow("original", img);
     if(img.data == NULL){
         qDebug() << "No image found! Check path." << filepath;
     }else{
         qDebug() << "Image found. Processing.";
+        qDebug() << filepath;
         if(compression) compress();
         if(centering) center();
         if(uniformBackground) uniformizeBg();
         if(watermark) applyWatermark();
         if(illuminationCorrection) correctIllumination();
     }
+    //cv::imshow("processed", img);
+
+    return img;
 }

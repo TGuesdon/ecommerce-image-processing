@@ -13,7 +13,7 @@ class Enhancer
 public:
     Enhancer(bool compression, bool centering, bool uniformBackground, bool watermark, bool illuminationCorrection);
 
-    void process(QString filepath);
+    cv::Mat process(QString filepath);
 
 private:
 

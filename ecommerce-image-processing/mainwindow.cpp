@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "opencv2/opencv.hpp"
 #include "enhancer.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -41,6 +40,10 @@ void MainWindow::ConstructMenu(){
     openFolderMenu->addAction(openFile);
 }
 
+/**
+ * @brief MainWindow::ConstructCentralWidget
+ * Initialize and add checkbox/button to the central widget
+ */
 void MainWindow::ConstructCentralWidget(){
     compressionCheckBox = new QCheckBox("Compress images");
     centerCheckBox = new QCheckBox("Center images");
@@ -48,7 +51,13 @@ void MainWindow::ConstructCentralWidget(){
     watermarkCheckBox = new QCheckBox("Apply Watermark");
     illuminationCorrectionCheckBox = new QCheckBox("Uniformize lightning");
 
+    chooseDstBtn = new QPushButton("Choose destination folder");
     enhanceButton = new QPushButton("Enhance");
+
+    savePath = QDir::currentPath();
+    savePathLabel = new QLabel();
+    savePathLabel->setText("Saving directory : " + savePath);
+    savePathLabel->setWordWrap(true);
 
     central = new QWidget();
     setCentralWidget(central);
@@ -59,8 +68,9 @@ void MainWindow::ConstructCentralWidget(){
     layout->addWidget(uniformizeBgCheckBox);
     layout->addWidget(watermarkCheckBox);
     layout->addWidget(illuminationCorrectionCheckBox);
+    layout->addWidget(chooseDstBtn);
+    layout->addWidget(savePathLabel);
     layout->addWidget(enhanceButton);
-
 }
 
 /**
@@ -68,9 +78,11 @@ void MainWindow::ConstructCentralWidget(){
  * Connect custom signals to their function
  */
 void MainWindow::Connector(){
-    connect(this, SIGNAL(ImagesPathChanged(QString)), this, SLOT(CheckPath()));
-    connect(this, SIGNAL(ImagesPathChanged(QString)), this, SLOT(CountImage()));
+    connect(this, SIGNAL(ImagesPathChanged()), this, SLOT(CheckPath()));
+    connect(this, SIGNAL(ImagesPathChanged()), this, SLOT(CountImage()));
     connect(enhanceButton, SIGNAL(clicked()), this, SLOT(ApplyEnhancement()));
+    connect(chooseDstBtn, SIGNAL(clicked()), this, SLOT(OpenSaveFolder()));
+    connect(this, SIGNAL(SavePathChanged()), this, SLOT(UpdateSaveLabel()));
 }
 
 //---------FILES RELATED FUNCTIONS-----------//
@@ -86,10 +98,26 @@ void MainWindow::ApplyEnhancement(){
         QDir directory(imagesPath);
         QStringList imagesList = directory.entryList(QStringList() << "*.jpg" << "*.JPG" << "*.png" << "*.PNG" << "*.jpeg" << "*.JPEG", QDir::Files);
         for(auto path : imagesList){
-            enhancer.process(imagesPath + "/" + path);
+            cv::Mat res = enhancer.process(imagesPath + "/" + path);
         }
     }else{
-        enhancer.process(imagesPath);
+        cv::Mat res = enhancer.process(imagesPath);
+        cv::imwrite(imagesPath.toStdString(), res);
+    }
+}
+
+/**
+ * @brief MainWindow::SaveImage
+ * @param img to save
+ * @param path
+ * @return true if saved
+ */
+void MainWindow::SaveImage(cv::Mat img, QString path){
+    if(!cv::imwrite(path.toStdString(), img)){
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setText("Failed save of image : " + path);
+        msgBox.exec();
     }
 }
 
@@ -131,24 +159,37 @@ void MainWindow::CountImage(){
     }
 }
 
+/**
+ * @brief MainWindow::OpenSaveFolder
+ * Open QFileDialog for choosing save folder
+ */
+void MainWindow::OpenSaveFolder(){
+    savePath = QFileDialog::getExistingDirectory(this, tr("Open images folder"), ".", QFileDialog::ShowDirsOnly);
+    emit SavePathChanged();
+}
+
+void MainWindow::UpdateSaveLabel(){
+    savePathLabel->setText("Saving directory : " + savePath);
+}
+
 //-----------MENU FUNCTIONS------------//
 
 /**
  * @brief MainWindow::OpenFolder
- * TODO:Open a QFileDialog
+ * Open a QFileDialog
  */
 void MainWindow::OpenFolder(){
     imagesPath = QFileDialog::getExistingDirectory(this, tr("Open images folder"), ".", QFileDialog::ShowDirsOnly);
-    emit ImagesPathChanged(imagesPath);
+    emit ImagesPathChanged();
 }
 
 /**
  * @brief MainWindow::OpenFolder
- * TODO:Open a QFileDialog
+ * Open a QFileDialog
  */
 void MainWindow::OpenFile(){
     imagesPath = QFileDialog::getOpenFileName(this, tr("Open Image"), "~", tr("Image Files (*.png *.jpg *.jpeg)"));
-    emit ImagesPathChanged(imagesPath);
+    emit ImagesPathChanged();
 }
 
 MainWindow::~MainWindow()
