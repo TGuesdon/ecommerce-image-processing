@@ -31,6 +31,10 @@ private:
     bool watermark = false;
     bool illuminationCorrection = false;
 
+    bool blur = true;
+    bool erode = false;
+    bool dilate = false;
+
     cv::Mat img;
 };
 

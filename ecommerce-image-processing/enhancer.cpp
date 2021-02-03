@@ -17,6 +17,15 @@ std::vector<cv::Point> Enhancer::getContour(){
     cv::Mat tmp;
     cv::Mat grayscale;
     cv::cvtColor(img, grayscale, cv::COLOR_BGR2GRAY);
+
+    //Inverse to get white on black image
+    cv::bitwise_not(grayscale, grayscale);
+
+    //Blur to get better tresholding
+    if(blur){
+        cv::GaussianBlur(grayscale, grayscale, {7,7}, 0);
+    }
+
     cv::threshold(grayscale, tmp, 0.0, 255.0, cv::THRESH_BINARY + cv::THRESH_OTSU);
 
     std::vector<std::vector<cv::Point>> contours;
