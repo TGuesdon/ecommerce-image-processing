@@ -10,6 +10,28 @@ Enhancer::Enhancer(bool compression, bool centering, bool uniformBackground, boo
 }
 
 /**
+ * @brief Enhancer::getContour
+ * @return 1 contour if it can be isolated, otherwise an empty vector
+ */
+std::vector<cv::Point> Enhancer::getContour(){
+    cv::Mat tmp;
+    cv::Mat grayscale;
+    cv::cvtColor(img, grayscale, cv::COLOR_BGR2GRAY);
+    cv::threshold(grayscale, tmp, 0.0, 255.0, cv::THRESH_BINARY + cv::THRESH_OTSU);
+
+    std::vector<std::vector<cv::Point>> contours;
+    std::vector<cv::Vec4i> hierarchy;
+    cv::findContours(tmp, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_TC89_KCOS);
+    if(contours.size() == 1){
+        qDebug() << "Found one contour";
+        return contours[0];
+    }else{
+        qDebug() << "Too much contour, failed to isolate one";
+        return std::vector<cv::Point>();
+    }
+}
+
+/**
  * @brief Enhancer::compress
  * Compress image ?
  */
@@ -34,6 +56,7 @@ void Enhancer::center()
 void Enhancer::uniformizeBg()
 {
     qDebug() << "Background uniformization";
+    std::vector<cv::Point> contour = getContour();
 }
 
 /**

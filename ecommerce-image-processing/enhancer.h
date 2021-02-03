@@ -23,6 +23,8 @@ private:
     void applyWatermark();
     void correctIllumination();
 
+    std::vector<cv::Point> getContour();
+
     bool compression = false;
     bool centering = false;
     bool uniformBackground = false;
