@@ -15,6 +15,9 @@ public:
 
     cv::Mat process(QString filepath);
 
+    int getSucessfulBgUniformization();
+    int getTotal();
+
 private:
 
     void compress();
@@ -34,6 +37,9 @@ private:
     bool blur = true;
     bool erode = true;
     bool dilate = true;
+
+    int totalProcessed = 0;
+    int succesfulBgUniformization = 0;
 
     cv::Mat img;
 };

@@ -28,22 +28,22 @@ std::vector<cv::Point> Enhancer::getContour(){
 
     cv::threshold(grayscale, tmp, 0.0, 255.0, cv::THRESH_BINARY + cv::THRESH_OTSU);
 
+    cv::Mat kernel = cv::Mat::ones(5,5, 0);
+
     if(erode){
-        cv::erode(tmp,tmp, cv::Mat(),cv::Point(-1,-1), 2);
+        cv::erode(tmp,tmp, kernel,cv::Point(-1,-1), 2);
     }
 
     if(dilate){
-        cv::dilate(tmp,tmp, cv::Mat(),cv::Point(-1,-1), 10);
+        cv::dilate(tmp,tmp, kernel,cv::Point(-1,-1), 10);
     }
 
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
     cv::findContours(tmp, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_TC89_KCOS);
     if(contours.size() == 1){
-        qDebug() << "Found one contour";
         return contours[0];
     }else{
-        qDebug() << "Too much contour, failed to isolate one";
         return std::vector<cv::Point>();
     }
 }
@@ -74,6 +74,9 @@ void Enhancer::uniformizeBg()
 {
     qDebug() << "Background uniformization";
     std::vector<cv::Point> contour = getContour();
+    if(!contour.empty()){
+        succesfulBgUniformization++;
+    }
 }
 
 /**
@@ -122,13 +125,23 @@ cv::Mat Enhancer::process(QString filepath)
     }else{
         qDebug() << "Image found. Processing.";
         qDebug() << filepath;
+        totalProcessed ++;
+
         if(compression) compress();
         if(centering) center();
+        if(illuminationCorrection) correctIllumination();
         if(uniformBackground) uniformizeBg();
         if(watermark) applyWatermark();
-        if(illuminationCorrection) correctIllumination();
     }
     //cv::imshow("processed", img);
 
     return img;
+}
+
+int Enhancer::getTotal(){
+    return totalProcessed;
+}
+
+int Enhancer::getSucessfulBgUniformization(){
+       return succesfulBgUniformization;
 }

@@ -108,6 +108,10 @@ void MainWindow::ApplyEnhancement(){
         QString filename(fileInfo.fileName());
         SaveImage(res, savePath + "/" + filename);
     }
+
+    if(uniformizeBgCheckBox->isChecked()){
+        qDebug() << "Succesfully uniformized : " << enhancer.getSucessfulBgUniformization() << " / " << enhancer.getTotal();
+    }
 }
 
 /**
