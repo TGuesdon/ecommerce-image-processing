@@ -32,8 +32,8 @@ private:
     bool illuminationCorrection = false;
 
     bool blur = true;
-    bool erode = false;
-    bool dilate = false;
+    bool erode = true;
+    bool dilate = true;
 
     cv::Mat img;
 };

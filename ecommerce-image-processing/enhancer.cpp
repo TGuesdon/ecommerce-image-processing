@@ -28,6 +28,14 @@ std::vector<cv::Point> Enhancer::getContour(){
 
     cv::threshold(grayscale, tmp, 0.0, 255.0, cv::THRESH_BINARY + cv::THRESH_OTSU);
 
+    if(erode){
+        cv::erode(tmp,tmp, cv::Mat(),cv::Point(-1,-1), 2);
+    }
+
+    if(dilate){
+        cv::dilate(tmp,tmp, cv::Mat(),cv::Point(-1,-1), 10);
+    }
+
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
     cv::findContours(tmp, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_TC89_KCOS);
