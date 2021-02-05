@@ -68,6 +68,21 @@ void Enhancer::compress()
 void Enhancer::center()
 {
     qDebug() << "Centering";
+    std::vector<cv::Point> contour = getContour();
+    if(!contour.empty()){
+       cv::Moments M = cv::moments(contour);
+       int cX = int(M.m10 / M.m00);
+       int cY = int(M.m01 / M.m00);
+
+       int iX = img.size().width/2;
+       int iY = img.size().height/2;
+
+       int translateX = iX - cX;
+       int translateY = iY - cY;
+
+       cv::Mat trans_mat = (cv::Mat_<double>(2,3) << 1, 0, translateX, 0, 1, translateY);
+       cv::warpAffine(img,img,trans_mat,img.size());
+    }
 }
 
 /**
