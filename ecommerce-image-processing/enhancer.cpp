@@ -18,6 +18,8 @@ std::vector<cv::Point> Enhancer::getContour(){
     cv::Mat grayscale;
     cv::cvtColor(img, grayscale, cv::COLOR_BGR2GRAY);
 
+    cv::resize(grayscale, grayscale, cv::Size(), 0.10, 0.10);
+
     //Inverse to get white on black image
     cv::bitwise_not(grayscale, grayscale);
 
@@ -28,7 +30,7 @@ std::vector<cv::Point> Enhancer::getContour(){
 
     cv::threshold(grayscale, tmp, 0.0, 255.0, cv::THRESH_BINARY + cv::THRESH_OTSU);
 
-    cv::Mat kernel = cv::Mat::ones(5,5, 0);
+    cv::Mat kernel = cv::Mat::ones( 9, 9, 0 );
 
     if(erode){
         cv::erode(tmp,tmp, kernel,cv::Point(-1,-1), 2);
@@ -37,6 +39,8 @@ std::vector<cv::Point> Enhancer::getContour(){
     if(dilate){
         cv::dilate(tmp,tmp, kernel,cv::Point(-1,-1), 10);
     }
+
+    cv::resize(tmp, tmp, cv::Size(), 10.0, 10.0);
 
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
