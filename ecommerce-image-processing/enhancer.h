@@ -27,6 +27,7 @@ private:
     void correctIllumination();
 
     std::vector<cv::Point> getContour();
+    void fillBlank(int translateX, int translateY);
 
     bool compression = false;
     bool centering = false;

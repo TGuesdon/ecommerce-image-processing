@@ -82,6 +82,43 @@ void Enhancer::center()
 
        cv::Mat trans_mat = (cv::Mat_<double>(2,3) << 1, 0, translateX, 0, 1, translateY);
        cv::warpAffine(img,img,trans_mat,img.size());
+
+       fillBlank(translateX, translateY);
+    }
+}
+
+void Enhancer::fillBlank(int translateX, int translateY){
+    qDebug() << "translate x : " << translateX;
+    qDebug() << "translate y : " << translateY;
+    int xStart, xEnd;
+    int yStart, yEnd;
+
+    if(translateX > 0){
+        //Translation to the right
+        xStart = 0;
+        xEnd = translateX;
+    }else{
+        //Translation to the left
+        xStart = img.size().width - 1 + translateX;
+        xEnd = img.size().width;
+    }
+
+    if(translateY > 0){
+        //Translation to the bottom
+        yStart = 0;
+        yEnd = translateY;
+    }else{
+        //Translation to the top
+        yStart = img.size().height - 1 + translateY;
+        yEnd = img.size().height;
+    }
+
+    for(int i = 0; i < img.rows; i++){
+        for(int j = 0; j < img.cols; j++){
+            if((xStart < i && xEnd > i) || (yStart < j && yEnd > j)){
+                img.at<cv::Vec3b>(cv::Point(i,j)) = cv::Vec3b(255,255,255);
+            }
+        }
     }
 }
 
