@@ -113,6 +113,7 @@ void Enhancer::fillBlank(int translateX, int translateY){
         yEnd = img.size().height;
     }
 
+    //Replace blank pixels with white pixels
     for(int i = 0; i < img.rows; i++){
         for(int j = 0; j < img.cols; j++){
             if((xStart < i && xEnd > i) || (yStart < j && yEnd > j)){
@@ -120,6 +121,41 @@ void Enhancer::fillBlank(int translateX, int translateY){
             }
         }
     }
+
+    //Gaussian blur to smooth the separation between new white pixels and gray/white pixels
+    int xRegionStart, xRegionEnd, yRegionStart, yRegionEnd;
+    int regionSize = 40;
+    int kernelSize = 39;
+
+    if(translateX > 0){
+        xRegionStart = xEnd - regionSize / 2;
+    }else{
+        xRegionStart = xStart - regionSize / 2;
+    }
+    if(translateY > 0){
+        yRegionStart = yEnd - regionSize / 2;
+    }else{
+        yRegionStart = yStart - regionSize / 2;
+    }
+
+    xRegionEnd = xRegionStart + regionSize;
+    yRegionEnd = yRegionStart + regionSize;
+
+    if(xRegionStart < 0) xRegionStart = 0;
+    if(xRegionEnd > img.size().width) xRegionEnd = img.size().width;
+    if(yRegionStart < 0) yRegionStart = 0;
+    if(yRegionEnd > img.size().height) yRegionEnd = img.size().height;
+
+    cv::Range rangeRows = cv::Range::all();
+    cv::Range rangeCols = cv::Range(yRegionStart, yRegionEnd);
+    cv::medianBlur(img(rangeRows, rangeCols), img(rangeRows, rangeCols), kernelSize);
+    cv::GaussianBlur(img(rangeRows, rangeCols), img(rangeRows, rangeCols), {kernelSize,kernelSize}, 0);
+
+    rangeRows = cv::Range(xRegionStart, xRegionEnd);
+    rangeCols = cv::Range::all();
+    cv::medianBlur(img(rangeRows, rangeCols), img(rangeRows, rangeCols), kernelSize);
+    cv::GaussianBlur(img(rangeRows, rangeCols), img(rangeRows, rangeCols), {kernelSize,kernelSize}, 0);
+
 }
 
 /**
