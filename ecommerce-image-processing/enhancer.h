@@ -26,7 +26,7 @@ private:
     void applyWatermark();
     void correctIllumination();
 
-    std::vector<cv::Point> getContour();
+    std::vector<cv::Point> getContour(bool erode, bool dilate);
     void fillBlank(int translateX, int translateY);
 
     bool compression = false;
@@ -36,8 +36,6 @@ private:
     bool illuminationCorrection = false;
 
     bool blur = true;
-    bool erode = true;
-    bool dilate = true;
 
     int totalProcessed = 0;
     int succesfulBgUniformization = 0;

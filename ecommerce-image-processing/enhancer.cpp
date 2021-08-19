@@ -13,7 +13,7 @@ Enhancer::Enhancer(bool compression, bool centering, bool uniformBackground, boo
  * @brief Enhancer::getContour
  * @return 1 contour if it can be isolated, otherwise an empty vector
  */
-std::vector<cv::Point> Enhancer::getContour(){
+std::vector<cv::Point> Enhancer::getContour(bool erode, bool dilate){
     cv::Mat tmp;
     cv::Mat grayscale;
     cv::cvtColor(img, grayscale, cv::COLOR_BGR2GRAY);
@@ -21,32 +21,62 @@ std::vector<cv::Point> Enhancer::getContour(){
     cv::resize(grayscale, grayscale, cv::Size(), 0.10, 0.10);
 
     //Inverse to get white on black image
-    cv::bitwise_not(grayscale, grayscale);
+    //cv::bitwise_not(grayscale, grayscale);
 
     //Blur to get better tresholding
     if(blur){
         cv::GaussianBlur(grayscale, grayscale, {7,7}, 0);
     }
 
-    cv::threshold(grayscale, tmp, 0.0, 255.0, cv::THRESH_BINARY + cv::THRESH_OTSU);
+    //cv::threshold(grayscale, img, 0.0, 255.0, cv::THRESH_BINARY + cv::THRESH_OTSU);
+    cv::adaptiveThreshold(grayscale, tmp, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 11, 2);
 
-    cv::Mat kernel = cv::Mat::ones( 9, 9, 0 );
+    //cv::Mat kernel = cv::Mat::ones( 9, 9, 0 ); //Square
+    cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(9,9));//Circle
 
     if(erode){
         cv::erode(tmp,tmp, kernel,cv::Point(-1,-1), 2);
     }
 
     if(dilate){
-        cv::dilate(tmp,tmp, kernel,cv::Point(-1,-1), 10);
+        cv::dilate(tmp,tmp, kernel,cv::Point(-1,-1), 2);
     }
 
+    if(erode){
+        cv::erode(tmp,tmp, kernel,cv::Point(-1,-1), 2);
+    }
+
+    if(dilate){
+        cv::dilate(tmp,tmp, kernel,cv::Point(-1,-1), 2);
+    }
+
+    if(erode){
+        cv::erode(tmp,tmp, kernel,cv::Point(-1,-1), 2);
+    }
+
+    if(dilate){
+        cv::dilate(tmp,tmp, kernel,cv::Point(-1,-1), 2);
+    }
+
+
     cv::resize(tmp, tmp, cv::Size(), 10.0, 10.0);
+    cv::bitwise_not(tmp, tmp);
 
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
-    cv::findContours(tmp, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_TC89_KCOS);
+    cv::findContours(tmp, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_TC89_KCOS);
     if(contours.size() == 1){
         return contours[0];
+    }else if(contours.size() > 1){
+        int imax = -1;
+        int max = -1;
+        for(unsigned int i = 0; i < contours.size(); i ++){
+            if(cv::contourArea(contours[i]) > max){
+                imax = i;
+                max = cv::contourArea(contours[i]);
+            }
+        }
+        return contours[imax];
     }else{
         return std::vector<cv::Point>();
     }
@@ -68,7 +98,9 @@ void Enhancer::compress()
 void Enhancer::center()
 {
     qDebug() << "Centering";
-    std::vector<cv::Point> contour = getContour();
+    std::vector<cv::Point> contour = getContour(true, true);
+    //cv::drawContours(img, std::vector<std::vector<cv::Point>>(1, contour), -1, cv::Scalar(0,255,0),3);
+
     if(!contour.empty()){
        cv::Moments M = cv::moments(contour);
        int cX = int(M.m10 / M.m00);
@@ -165,9 +197,22 @@ void Enhancer::fillBlank(int translateX, int translateY){
 void Enhancer::uniformizeBg()
 {
     qDebug() << "Background uniformization";
-    std::vector<cv::Point> contour = getContour();
+    std::vector<cv::Point> contour = getContour(true, true);
     if(!contour.empty()){
-        succesfulBgUniformization++;
+        //Background color
+        cv::Scalar white = cv::Scalar(255,255,255);
+
+        //Mask corresponding to the inside of contour
+        cv::Mat maskInsideContour = cv::Mat::zeros(img.size(), CV_8UC1);
+        cv::drawContours(maskInsideContour, std::vector<std::vector<cv::Point>>(1, contour), -1, cv::Scalar(255), cv::FILLED);
+
+        //White image target
+        cv::Mat maskedImage = cv::Mat(img.size(), CV_8UC3);
+        maskedImage.setTo(white);
+
+        //Copy pixels from original image inside contour to white image (masked image)
+        img.copyTo(maskedImage, maskInsideContour);
+        img = maskedImage;
     }
 }
 
@@ -219,10 +264,10 @@ cv::Mat Enhancer::process(QString filepath)
         qDebug() << filepath;
         totalProcessed ++;
 
-        if(compression) compress();
+        if(uniformBackground) uniformizeBg();
         if(centering) center();
         if(illuminationCorrection) correctIllumination();
-        if(uniformBackground) uniformizeBg();
+        if(compression) compress();
         if(watermark) applyWatermark();
     }
     //cv::imshow("processed", img);
